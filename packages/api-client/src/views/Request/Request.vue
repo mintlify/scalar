@@ -9,6 +9,7 @@ import { useWorkspace } from '@/store'
 import RequestSection from '@/views/Request/RequestSection/RequestSection.vue'
 import RequestSubpageHeader from '@/views/Request/RequestSubpageHeader.vue'
 import ResponseSection from '@/views/Request/ResponseSection/ResponseSection.vue'
+import { useLiveSync } from '@/views/Request/hooks/useLiveSync'
 import type { RequestPayload } from '@scalar/oas-utils/entities/spec'
 import { safeJSON } from '@scalar/object-utils/parse'
 import { useToasts } from '@scalar/use-toasts'
@@ -103,6 +104,8 @@ onMounted(() => {
   executeRequestBus.on(executeRequest)
   cancelRequestBus.on(cancelRequest)
 })
+
+useLiveSync()
 
 /**
  * Need to manually remove listener on unmount due to vueuse memory leak
