@@ -878,6 +878,9 @@ importers:
       vue:
         specifier: ^3.4.29
         version: 3.4.31(typescript@5.5.2)
+      vue-router:
+        specifier: ^4.3.0
+        version: 4.4.0(vue@3.4.31(typescript@5.5.2))
     devDependencies:
       '@etchteam/storybook-addon-css-variables-theme':
         specifier: ^1.5.1
@@ -37296,6 +37299,11 @@ snapshots:
     dependencies:
       '@vue/devtools-api': 6.6.3
       vue: 3.4.31(typescript@5.6.2)
+
+  vue-router@4.4.0(vue@3.4.31(typescript@5.5.2)):
+    dependencies:
+      '@vue/devtools-api': 6.6.3
+      vue: 3.4.31(typescript@5.5.2)
 
   vue-router@4.4.0(vue@3.4.31(typescript@5.6.2)):
     dependencies:
