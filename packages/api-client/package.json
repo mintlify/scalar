@@ -163,6 +163,7 @@
   },
   "devDependencies": {
     "@scalar/build-tooling": "workspace:*",
+    "@scalar/galaxy": "workspace:*",
     "@types/content-type": "^1.1.8",
     "@types/js-cookie": "^3.0.6",
     "@types/shell-quote": "^1.7.5",
