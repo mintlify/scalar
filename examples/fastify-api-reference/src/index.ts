@@ -36,6 +36,9 @@ fastify.put<{ Body: { name: string } }>(
       summary: 'Replies with a nice greeting',
       body: {
         type: 'object',
+        example: {
+          name: 'Marc',
+        },
         properties: {
           name: {
             type: 'string',
