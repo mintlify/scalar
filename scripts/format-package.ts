@@ -134,13 +134,6 @@ async function formatPackage(filepath: string) {
   // Check that required scripts are entered
   validatePackageScripts(formattedData['scripts'], formattedData.name)
 
-  // Sort nested keys alphanumerically
-  sortKeys.forEach((key) => {
-    if (formattedData[key]) {
-      formattedData[key] = sortObjectKeys(formattedData[key])
-    }
-  })
-
   // Check whether the package.json needs to be updated
   if (JSON.stringify(data) === JSON.stringify(formattedData)) {
     return
@@ -173,11 +166,6 @@ run()
 
 // ---------------------------------------------------------------------------
 // Helpers
-
-/** Sort object keys alphanumerically */
-function sortObjectKeys(obj: Record<string, any>) {
-  return { ...obj }
-}
 
 /** Validate that required package scripts exists */
 function validatePackageScripts(
