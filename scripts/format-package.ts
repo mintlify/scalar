@@ -176,14 +176,7 @@ run()
 
 /** Sort object keys alphanumerically */
 function sortObjectKeys(obj: Record<string, any>) {
-  const sorted: Record<string, any> = {}
-  Object.keys(obj)
-    .sort()
-    .forEach((key) => {
-      sorted[key] = obj[key]
-    })
-
-  return sorted
+  return { ...obj }
 }
 
 /** Validate that required package scripts exists */
