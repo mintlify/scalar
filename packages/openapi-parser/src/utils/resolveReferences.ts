@@ -148,14 +148,22 @@ export function resolveReferences(
   }
 }
 
-// TODO: Is there a better way? :D
-function isCircular(schema: AnyObject) {
-  try {
-    JSON.stringify(schema)
+export function isCircular(schema: AnyObject) {
+  const references = new WeakSet<object>()
+
+  function detect(current: unknown) {
+    if (typeof current !== 'object' || !current) return false
+    if (references.has(current)) return true
+    references.add(current)
+    for (const key in current) {
+      if (!current.hasOwnProperty(key)) continue
+      if (detect(current[key])) return true
+    }
+    references.delete(current)
     return false
-  } catch (error) {
-    return true
   }
+
+  return detect(schema)
 }
 
 /**
