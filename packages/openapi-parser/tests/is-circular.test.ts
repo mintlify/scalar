@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { type AnyObject, isCircular } from '../src'
+import { type AnyObject, isCircular, resolveReferences } from '../src'
 
 function baseline_isCircular(schema: unknown) {
   try {
@@ -188,6 +188,48 @@ function runTests(name: string, fn: (obj: AnyObject) => boolean) {
         objC.refs.push(objA)
 
         expect(fn(objA)).toBe(true)
+      })
+
+      test('correctly resolves circular schemas', () => {
+        const partialSpecification: AnyObject = {
+          foo: {
+            bar: {
+              $ref: '#/foo',
+            },
+          },
+        }
+
+        const { schema } = resolveReferences(partialSpecification)
+
+        expect(fn(schema)).toBe(true)
+      })
+
+      test('resolves a more advanced circular reference', async () => {
+        const partialSpecification: AnyObject = {
+          type: 'object',
+          properties: {
+            element: { $ref: '#/schemas/element' },
+            foobar: { $ref: '#/schemas/foobar' },
+          },
+          schemas: {
+            element: {
+              type: 'object',
+              properties: {
+                element: { $ref: '#/schemas/element' },
+              },
+            },
+            foobar: {
+              type: 'object',
+              properties: {
+                foobar: { $ref: '#/schemas/foobar' },
+              },
+            },
+          },
+        }
+
+        const { schema } = resolveReferences(partialSpecification)
+
+        expect(fn(schema)).toBe(true)
       })
     })
   })
