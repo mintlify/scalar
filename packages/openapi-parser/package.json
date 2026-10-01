@@ -3,11 +3,11 @@
   "description": "modern OpenAPI parser written in TypeScript",
   "license": "MIT",
   "author": "Scalar (https://github.com/scalar)",
-  "homepage": "https://github.com/scalar/scalar",
-  "bugs": "https://github.com/scalar/scalar/issues/new/choose",
+  "homepage": "https://github.com/mintlify/scalar",
+  "bugs": "https://github.com/mintlify/scalar/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scalar/scalar.git",
+    "url": "https://github.com/mintlify/scalar",
     "directory": "packages/openapi-parser"
   },
   "keywords": [
@@ -18,6 +18,10 @@
     "typescript"
   ],
   "version": "0.0.9",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "engines": {
     "node": ">=18"
   },
@@ -71,7 +75,7 @@
     "@babel/code-frame": "^7.24.7",
     "@google-cloud/storage": "^7.12.1",
     "@mintlify/build-tooling": "workspace:*",
-    "@mintlify/openapi-types": "0.0.0",
+    "@mintlify/openapi-types": "workspace:*",
     "@types/node": "^20.14.10",
     "glob": "^10.3.10",
     "json-to-ast": "^2.1.0",

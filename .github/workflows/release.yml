@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  bump-packages:
+    if: ${{ !startsWith(github.event.head_commit.message, 'bump packages') }}
+    runs-on: ubuntu-latest
+    env:
+      SLACK_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+        timeout-minutes: 5
+        with:
+          token: ${{ secrets.PUSH_TOKEN || github.token }}
+          fetch-depth: 0
+          filter: blob:none
+          ref: 'main'
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      - name: Install npm
+        run: npm install -g npm@12
+      - name: Install modules
+        run: pnpm install --frozen-lockfile
+      - name: Build packages
+        run: pnpm --filter './packages/*' build
+      - name: Test openapi-parser
+        run: pnpm --filter @mintlify/openapi-parser exec vitest run src
+      - name: Configure git
+        run: |
+          git config --global user.name "Mintie Bot"
+          git config --global user.email "aws@mintlify.com"
+      - name: Update package versions
+        timeout-minutes: 10
+        run: pnpm dlx lerna@9.0.5 version patch -m "bump packages" --no-push --exact --no-private -y
+      - name: Notify Slack of failure
+        if: failure() && env.SLACK_TOKEN != ''
+        uses: slackapi/slack-github-action@v3
+        with:
+          method: chat.postMessage
+          token: ${{ env.SLACK_TOKEN }}
+          payload: |
+            {
+              "channel": "C04HXQV9KQC",
+              "text": "mintlify/scalar bump packages failed, mintie bot needs help: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+      - name: Push updates to github
+        if: success()
+        run: git push --force-with-lease --atomic origin main --tags
+      - name: Publish packages to npm
+        id: publish
+        if: success()
+        run: pnpm dlx lerna@9.0.5 publish from-package --no-private -y
+      - name: Notify Slack of npm publish failure
+        if: always() && steps.publish.outcome == 'failure' && env.SLACK_TOKEN != ''
+        uses: slackapi/slack-github-action@v3
+        with:
+          method: chat.postMessage
+          token: ${{ env.SLACK_TOKEN }}
+          payload: |
+            {
+              "channel": "C04HXQV9KQC",
+              "text": "mintlify/scalar npm publish failed, mintie bot needs help: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }

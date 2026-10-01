@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/lerna/lerna/v9.0.5/packages/lerna/schemas/lerna-schema.json",
+  "version": "independent",
+  "npmClient": "pnpm",
+  "command": {
+    "version": {
+      "ignoreChanges": ["**/*.md", "**/tests/**", "**/*.test.ts"]
+    }
+  }
+}

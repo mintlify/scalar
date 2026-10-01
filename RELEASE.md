@@ -2,11 +2,24 @@
 
 ## Publishing new versions on npm
 
-To give users a nice changelog we add so called changesets to our PRs.
+Every merge to `main` runs the [Release workflow](.github/workflows/release.yml), mirroring how `mintlify/mint` publishes its packages:
 
-A changeset is an intent to release a set of packages at particular semver bump types with a summary of the changes made. The following command allows you to write changeset files as you make changes:
-`$ pnpm changeset`
+1. Install, build `packages/*`, and run the `@mintlify/openapi-parser` tests.
+2. `lerna version patch` bumps every public package that changed since its last release tag, commits the bump as `bump packages`, and tags each package (`@mintlify/openapi-parser@x.y.z`).
+3. The bump commit and tags are pushed to `main`.
+4. `lerna publish from-package` publishes any version that is not on npm yet, using npm trusted publishing (GitHub OIDC). No npm token is stored in the repository.
 
-Once a PR with a changeset is merged into main the Release workflow will create a PR. Once we’re ready to release new versions, we just need to merge the PR.
+Published packages:
 
-When the release PR lands in main, the release workflow will run again and publish the new version to npm then.
+- `@mintlify/openapi-parser`
+- `@mintlify/openapi-types`
+
+`@mintlify/build-tooling` is private and never published. Changes that only touch Markdown files, tests, or test fixtures do not trigger a version bump.
+
+Releases are always patch bumps. For a minor or major release, set `version` in the package's `package.json` in your PR; the release workflow patch-bumps on top of it (for example `0.1.0` is published as `0.1.1`).
+
+## Setup
+
+- Each published package needs a trusted publisher on npmjs.com: repository `mintlify/scalar`, workflow `release.yml`.
+- `PUSH_TOKEN` (optional): a token allowed to push to `main` if branch protection blocks the default `GITHUB_TOKEN`.
+- `SLACK_BOT_USER_OAUTH_ACCESS_TOKEN` (optional): enables failure notifications.
